@@ -37,9 +37,7 @@
             font-weight: 700;
         }
 
-        .form-group { 
-            margin-bottom: 24px; 
-        }
+        .form-group { margin-bottom: 24px; }
 
         label { 
             display: block; 
@@ -80,17 +78,10 @@
             transition: transform 0.1s ease;
         }
 
-        button:active { 
-            transform: scale(0.98); 
-        }
+        button:active { transform: scale(0.98); }
 
-        .btn-in { 
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); 
-        }
-
-        .btn-out { 
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
-        }
+        .btn-in { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .btn-out { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
 
         #status { 
             text-align: center; 
@@ -112,7 +103,7 @@
     <div class="form-group">
         <label for="empName">選擇您的姓名</label>
         <select id="empName">
-            <option value="">⏳ 正在連線讀取員工名單...</option>
+            <!-- 由 JS 自動渲染 -->
         </select>
     </div>
     
@@ -130,34 +121,27 @@
 </div>
 
 <script>
+    // 💡 填入你的 GAS 網頁應用程式網址
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyjJKQfa78W1jeviuSv-3mnTHJM2iM_ZsEdIyDsbvu4rTQwQgOUce7B3bf4r5Mn10z/exec";
 
     let coords = { latitude: null, longitude: null };
 
-    // 🚀 【JSONP 接收函數】：當 Google 傳回名單時會自動執行這個函式
-    function loadEmployeeList(names) {
+    // 💡【公司員工名單】：日後要增減員工，直接在這裡改文字即可！
+    let employeeList = ["芯", "不凡", "Human", "DK"];
+
+    // 頁面載入時初始化
+    window.onload = function() {
         const empSelect = document.getElementById('empName');
         empSelect.innerHTML = '<option value="">-- 請選擇您的名字 --</option>';
         
-        if (!names || names.length === 0 || (names[0] && names[0].includes("失敗"))) {
-            empSelect.innerHTML = '<option value="">❌ 讀取失敗，請確認試算表分頁名稱為「員工名單」</option>';
-        } else {
-            names.forEach(name => {
-                let option = document.createElement('option');
-                option.value = name;
-                option.innerText = name;
-                empSelect.appendChild(option);
-            });
-        }
-    }
+        employeeList.forEach(name => {
+            let option = document.createElement('option');
+            option.value = name;
+            option.innerText = name;
+            empSelect.appendChild(option);
+        });
 
-    window.onload = function() {
-        // 🚀 使用 JSONP 動態注入 Script 標籤，完美繞過 CodePen 的跨域阻擋 (CORS)
-        const script = document.createElement('script');
-        script.src = GAS_WEB_APP_URL + "?callback=loadEmployeeList&t=" + new Date().getTime();
-        document.body.appendChild(script);
-
-        // 📍 GPS 定位授權
+        // 📍 GPS 定位
         const statusDiv = document.getElementById('status');
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
